@@ -3,3 +3,4 @@
 - OdtwarzanieMuzyki
 - TworzeniePlaylisty
 - WyszukiwanieFolderowZMuzyka
+- ZapisywanieMuzyki
