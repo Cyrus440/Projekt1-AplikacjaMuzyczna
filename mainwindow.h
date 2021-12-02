@@ -2,12 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QFileDialog>
-#include <QtMultimedia/QAudio>
-#include <QtMultimedia/QMediaPlayer>
-#include <QDebug>
-#include <QtMultimedia/QAudioOutput>
-
+#include <QtCore>
+#include <QtGui>
+#include <QFileSystemModel>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -23,21 +20,14 @@ public:
 private slots:
     void on_pushButton_clicked();
 
-    void on_horizontalSlider_Progress_sliderMoved(int position);
+    void on_treeView_clicked(const QModelIndex &index);
 
-    void on_horizontalSlider_Volume_sliderMoved(int position);
-
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_3_clicked();
-
-    void on_positionChanged(qint64 position);
-
-    void on_durationChanged(qint64 position);
+    void on_listView_clicked(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;
-    QMediaPlayer *player;
-    QAudioOutput *audioOutput;
+    QFileSystemModel *dirmodel;
+    QFileSystemModel *filemodel;
+
 };
 #endif // MAINWINDOW_H
