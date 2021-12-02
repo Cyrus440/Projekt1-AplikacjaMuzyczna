@@ -3,21 +3,25 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDir>
-#include <QtMultimedia/QAudio>
-#include <QtMultimedia/QMediaPlayer>
-#include <QDebug>
-#include <QtMultimedia/QAudioOutput>
+#include <QtCore>
+#include <QtGui>
+#include <QFileSystemModel>
+#include <QFile>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    player = new QMediaPlayer;
-    audioOutput = new QAudioOutput;
-    player ->setAudioOutput(audioOutput);
-    connect(player, &QMediaPlayer::positionChanged, this, &MainWindow::on_positionChanged);
-    connect(player, &QMediaPlayer::durationChanged, this, &MainWindow::on_durationChanged);
+    QString sPath = "D//";
+    dirmodel = new QFileSystemModel(this);
+    dirmodel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
+    dirmodel->setRootPath(sPath);
+    ui->treeView->setModel(dirmodel);
+    filemodel = new QFileSystemModel(this);
+    filemodel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    filemodel->setRootPath(sPath);
+    ui -> listView->setModel(filemodel);
 
 }
 
@@ -29,42 +33,21 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QString filtr = "Pliki Muzyczne (*.mp3)" ;
-    QString nazwa_pliku =  QFileDialog::getOpenFileName(this, "Otwarcie Pliku", "D://", filtr);
-    QMessageBox::information(this, "..", nazwa_pliku);
+    QString filtr = "Pliki Muzyczne (*.mp3)";
+    QString nazwa_pliku = QFileDialog::getOpenFileName(this, "wybierz pliki", "D//", filtr);
+    QFile plik(nazwa_pliku);
+    QMessageBox::information(this,"..", nazwa_pliku);
 }
 
 
-void MainWindow::on_horizontalSlider_Progress_sliderMoved(int position)
+void MainWindow::on_treeView_clicked(const QModelIndex &index)
 {
-    player->setPosition(position);
+    QString sPath = dirmodel->fileInfo(index).absoluteFilePath();
+    ui->listView->setRootIndex(filemodel->setRootPath(sPath));
 }
 
-
-void MainWindow::on_horizontalSlider_Volume_sliderMoved(int position)
+void MainWindow::on_listView_clicked(const QModelIndex &index)
 {
-    audioOutput->setVolume(position);
+
 }
 
-void MainWindow::on_pushButton_2_clicked()
-{
-    player->setSource(QUrl::fromLocalFile("C:/Users/sobol_000/Tu"));
-    player->play();
-    qDebug() << player->errorString();
-}
-
-
-void MainWindow::on_pushButton_3_clicked()
-{
-    player->stop();
-}
-
-void MainWindow::on_positionChanged(qint64 position)
-{
-    ui->horizontalSlider_Progress->setValue(position);
-}
-
-void MainWindow::on_durationChanged(qint64 position)
-{
-    ui->horizontalSlider_Progress->setMaximum(position);
-}
