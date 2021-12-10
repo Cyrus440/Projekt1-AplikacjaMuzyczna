@@ -8,6 +8,7 @@
 #include <QFileSystemModel>
 #include <QFile>
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -46,8 +47,11 @@ void MainWindow::on_treeView_clicked(const QModelIndex &index)
     ui->listView->setRootIndex(filemodel->setRootPath(sPath));
 }
 
-void MainWindow::on_listView_clicked(const QModelIndex &index)
-{
 
+
+
+void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
+{
+    QString sPath = filemodel->fileInfo(index).absoluteFilePath();
 }
 
