@@ -7,7 +7,7 @@
 #include <QtGui>
 #include <QFileSystemModel>
 #include <QFile>
-
+#include <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -23,7 +23,6 @@ MainWindow::MainWindow(QWidget *parent)
     filemodel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
     filemodel->setRootPath(sPath);
     ui -> listView->setModel(filemodel);
-
 }
 
 MainWindow::~MainWindow()
@@ -34,10 +33,22 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QString filtr = "Pliki Muzyczne (*.mp3)";
-    QString nazwa_pliku = QFileDialog::getOpenFileName(this, "wybierz pliki", "D//", filtr);
-    QFile plik(nazwa_pliku);
-    QMessageBox::information(this,"..", nazwa_pliku);
+    QString filtr = "Obrazy (*.jpg *.png *.jpeg *.gif)";
+    QString filename = QFileDialog::getOpenFileName(this, tr("Wybierz: "), "D//", filtr);
+    if (QString::compare(filename, QString()) != 0)
+    {
+        QImage image;
+        bool valid = image.load(filename);
+        if(valid)
+        {
+            image = image.scaledToWidth(ui->label_pic->width(), Qt::SmoothTransformation);
+            ui->label_pic->setPixmap(QPixmap::fromImage(image));
+        }
+        else
+        {
+            //Error Handling
+        }
+    }
 }
 
 
@@ -50,8 +61,30 @@ void MainWindow::on_treeView_clicked(const QModelIndex &index)
 
 
 
-void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
+///void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
+///{
+///    QString sPath = filemodel->fileInfo(index).absoluteFilePath();
+///}
+
+
+void MainWindow::on_listView_clicked(const QModelIndex &index)
 {
     QString sPath = filemodel->fileInfo(index).absoluteFilePath();
+    QString filtr = "Obrazy (*.jpg *.png *.jpeg *.gif)";
+    QString filename = QFileDialog::getOpenFileName(this, tr("Wybierz: "), sPath, filtr);
+    if (QString::compare(filename, QString()) != 0)
+    {
+        QImage image;
+        bool valid = image.load(filename);
+        if(valid)
+        {
+            image = image.scaledToWidth(ui->label_pic->width(), Qt::SmoothTransformation);
+            ui->label_pic->setPixmap(QPixmap::fromImage(image));
+        }
+        else
+        {
+            //Error Handling
+        }
+    }
 }
 
